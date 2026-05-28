@@ -18,7 +18,7 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request){
         if(userRepository.findByUsername(request.getUsername()).isPresent()){
-            throw new RuntimeException("Username already exists");
+            throw new UsernameAlreadyExistsException("Username already exists");
         }
         User user = new User();
         user.setUsername(request.getUsername());
@@ -32,9 +32,9 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request){
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new InvalidCredentialsException("User not found."));
         if(!passwordEncoder.matches(request.getPassword(),user.getPassword())){
-            throw new RuntimeException("Password is incorrect");
+            throw new InvalidCredentialsException("Password is incorrect");
         }
         return new AuthResponse(jwtUtil.generateToken(request.getUsername()));
 
