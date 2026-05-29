@@ -62,9 +62,9 @@ public class RecipeService {
 
     }
 
-    public List<Recipe> getRecipes(List<String> ingredients){
+    public List<Recipe> getRecipes(RecipeRequest request){
         // Step 1: get basic results with IDs
-        List<SpoonacularSearchResult> searchResults = searchByIngredients(ingredients);
+        List<SpoonacularSearchResult> searchResults = searchByIngredients(request.getIngredients());
         // Step 2: for each result, get full details of recipe
         List<Recipe> recipes = new ArrayList<>();
         for(SpoonacularSearchResult result : searchResults){
