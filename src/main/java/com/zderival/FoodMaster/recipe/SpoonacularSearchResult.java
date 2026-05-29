@@ -9,13 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class Nutrition {
-    private double calories;
-    private double protein;
-    private double fat;
-    private double carbohydrates;
-    private double fiber;
-    private double sugar;
-    private double sodium;
-    private double cholesterol;
+public class SpoonacularSearchResult {
+    private int id;
+    private String title;
 }

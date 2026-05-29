@@ -17,3 +17,10 @@ Content-Type: application/json
   "username": "zderival",
   "password": "Godisgood"
 }
+
+###
+
+POST http://localhost:8080/recipes/search
+Content-Type: application/json
+
+["chicken", "rice", "garlic"]
