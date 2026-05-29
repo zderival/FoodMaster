@@ -24,13 +24,14 @@ public class RecipeService {
     }
 
     public Recipe getRecipeInformation(int id){
-        Recipe recipe = restClient.get()
+        SpoonacularRecipeResponse spoonacularRecipe = restClient.get()
                 .uri("https://api.spoonacular.com/recipes/{id}/information/?includeNutrition=true&apiKey={apiKey}",
                 id,spoonacular_api_key)
                 .retrieve()
-                .body(Recipe.class);
+                .body(SpoonacularRecipeResponse.class);
+
         Nutrition nutrition = new Nutrition();
-        for(SpoonacularNutrient nutrient: recipe.getSpoonacularNutrition().getNutrients()){
+        for(SpoonacularNutrient nutrient: spoonacularRecipe.getNutrition().getNutrients()){
             switch (nutrient.getName()){
                 case "Calories" -> nutrition.setCalories(nutrient.getAmount());
                 case "Protein" -> nutrition.setProtein(nutrient.getAmount());
@@ -42,14 +43,22 @@ public class RecipeService {
                 case "Cholesterol" -> nutrition.setCholesterol(nutrient.getAmount());
             }
         }
-        recipe.setNutrition(nutrition);
         List<String> dietaryInfo = new ArrayList<>();
-        if(recipe.isVegetarian()){dietaryInfo.add("Vegetarian");}
-        if(recipe.isVegan()){dietaryInfo.add("Vegan");}
-        if(recipe.isDairyFree()){dietaryInfo.add("Dairy Free");}
-        if(recipe.isGlutenFree()){dietaryInfo.add("Gluten Free");}
-        recipe.setDietaryInfo(dietaryInfo);
-        return recipe;
+        if(spoonacularRecipe.isVegetarian()){dietaryInfo.add("Vegetarian");}
+        if(spoonacularRecipe.isVegan()){dietaryInfo.add("Vegan");}
+        if(spoonacularRecipe.isDairyFree()){dietaryInfo.add("Dairy Free");}
+        if(spoonacularRecipe.isGlutenFree()){dietaryInfo.add("Gluten Free");}
+
+        Recipe recipeDTO = new Recipe();
+        recipeDTO.setSpoonacularId(spoonacularRecipe.getSpoonacularId());
+        recipeDTO.setTitle(spoonacularRecipe.getTitle());
+        recipeDTO.setNutrition(nutrition);
+        recipeDTO.setDietaryInfo(dietaryInfo);
+        recipeDTO.setIngredients(spoonacularRecipe.getIngredients());
+        recipeDTO.setCuisines(spoonacularRecipe.getCuisines());
+        recipeDTO.setInstructions(spoonacularRecipe.getInstructions());
+        recipeDTO.setReadyInMinutes(spoonacularRecipe.getReadyInMinutes());
+        return recipeDTO;
 
     }
 
