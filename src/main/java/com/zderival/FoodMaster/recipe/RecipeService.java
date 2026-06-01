@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,31 @@ public class RecipeService {
     @Value("${spoonacular.api.key}")
     private String spoonacular_api_key;
 
-    public List<SpoonacularSearchResult> searchByIngredients(List<String> ingredients){
-        String ingredientsParam = String.join(",", ingredients);
-        return restClient.get().uri("https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredients}&number=5&apiKey={apiKey}",
-                        ingredientsParam,spoonacular_api_key).retrieve().body(new ParameterizedTypeReference<List<SpoonacularSearchResult>>() {
-                });
+    public List<SpoonacularSearchResult> searchRecipes(RecipeRequest request) {
+        String ingredientsParam = String.join(",", request.getIngredients());
+        String allergiesParam = String.join(",", request.getAllergies());
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.spoonacular.com/recipes/complexSearch/")
+                .queryParam("includeIngredients", ingredientsParam)
+                .queryParam("addRecipeInformation", true)
+                .queryParam("addRecipeNutrition", true)
+                .queryParam("number", 5)
+                .queryParam("apiKey", spoonacular_api_key);
+
+        if (request.getCuisine() != null && !request.getCuisine().isEmpty()) {
+            builder.queryParam("cuisine", request.getCuisine());
+        }
+
+        if (request.getDiet() != null && !request.getDiet().isEmpty()) {
+            builder.queryParam("diet", request.getDiet());
+        }
+
+        if (request.getAllergies() != null && !request.getAllergies().isEmpty()) {
+            builder.queryParam("intolerances", allergiesParam);
+        }
+        String url = builder.toUriString();
+        SpoonacularSearchResponse response = restClient.get().uri(url).retrieve().body(SpoonacularSearchResponse.class);
+        return response.getResults();
     }
 
     public Recipe getRecipeInformation(int id){
@@ -64,7 +85,7 @@ public class RecipeService {
 
     public List<Recipe> getRecipes(RecipeRequest request){
         // Step 1: get basic results with IDs
-        List<SpoonacularSearchResult> searchResults = searchByIngredients(request.getIngredients());
+        List<SpoonacularSearchResult> searchResults = searchRecipes(request);
         // Step 2: for each result, get full details of recipe
         List<Recipe> recipes = new ArrayList<>();
         for(SpoonacularSearchResult result : searchResults){
