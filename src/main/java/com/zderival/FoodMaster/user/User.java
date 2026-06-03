@@ -1,13 +1,12 @@
 package com.zderival.FoodMaster.user;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@Getter @Setter
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -14,8 +14,8 @@ POST http://localhost:8080//auth/login
 Content-Type: application/json
 
 {
-  "username": "zderival",
-  "password": "Godisgood1"
+  "username": "zderival1",
+  "password": "Godisgood10."
 }
 
 ###
@@ -29,4 +29,33 @@ Content-Type: application/json
   "diet": "vegetarian",
   "allergies": [],
   "preferences": []
+}
+
+###
+
+POST http://localhost:8080/saved/save
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3ODA0NTUyMjcsImV4cCI6MTc4MDU0MTYyN30.oiC0TeOCfxxcTjn2_NlKgXPfvQ9akc9zv8t7V8wrsc2u8S-HmaUSQrKlOjxW_NV-
+
+{
+  "spoonacularId": 716361
+}
+
+###
+GET http://localhost:8080/saved/getRecipes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3ODA0NTUyMjcsImV4cCI6MTc4MDU0MTYyN30.oiC0TeOCfxxcTjn2_NlKgXPfvQ9akc9zv8t7V8wrsc2u8S-HmaUSQrKlOjxW_NV-
+
+{
+
+}
+
+###
+
+DELETE http://localhost:8080/saved/remove
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3ODA0NTUyMjcsImV4cCI6MTc4MDU0MTYyN30.oiC0TeOCfxxcTjn2_NlKgXPfvQ9akc9zv8t7V8wrsc2u8S-HmaUSQrKlOjxW_NV-
+
+{
+  "spoonacularId": 716361
 }

@@ -2,7 +2,6 @@ package com.zderival.FoodMaster.recipe;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,7 +23,6 @@ public class RecipeService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.spoonacular.com/recipes/complexSearch/")
                 .queryParam("includeIngredients", ingredientsParam)
                 .queryParam("addRecipeInformation", true)
-                .queryParam("addRecipeNutrition", true)
                 .queryParam("number", 5)
                 .queryParam("apiKey", spoonacular_api_key);
 

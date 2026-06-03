@@ -17,5 +17,4 @@ public class RecipeController {
     public List<Recipe> getRecipes(@RequestBody RecipeRequest ingredients){
         return recipeService.getRecipes(ingredients);
     }
-
 }
