@@ -2,6 +2,8 @@ package com.zderival.FoodMaster.config;
 
 import com.zderival.FoodMaster.auth.InvalidCredentialsException;
 import com.zderival.FoodMaster.auth.UsernameAlreadyExistsException;
+import com.zderival.FoodMaster.nutrition.ProfileExistsException;
+import com.zderival.FoodMaster.nutrition.ProfileNotFoundException;
 import com.zderival.FoodMaster.saved.RecipeAlreadySavedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +30,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RecipeAlreadySavedException.class)
         public ResponseEntity<String> handleRecipeAlreadySavedException(RecipeAlreadySavedException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<String> handleProfileNotFoundException(ProfileNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ProfileExistsException.class)
+    public ResponseEntity<String> handleProfileExistsException(ProfileExistsException e){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 }

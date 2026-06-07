@@ -18,6 +18,10 @@ Content-Type: application/json
   "password": "Godisgood10."
 }
 
+> {%
+    client.global.set("token", response.body.token);
+ %}
+
 ###
 
 POST http://localhost:8080/recipes/search
@@ -58,4 +62,43 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3O
 
 {
   "spoonacularId": 716361
+}
+
+###
+POST http://localhost:8080/profile/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "diet": "vegetarian",
+  "goal": "lose weight",
+  "allergies": ["peanuts", "shellfish"],
+  "preferences": ["high protein", "low carb"]
+}
+
+###
+GET http://localhost:8080/profile/get
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+}
+
+###
+PUT http://localhost:8080/profile/update
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "goal": "build muscle"
+
+}
+
+###
+DELETE http://localhost:8080/profile/delete
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
 }
