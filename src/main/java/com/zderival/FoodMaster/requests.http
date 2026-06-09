@@ -30,7 +30,7 @@ Content-Type: application/json
 {
   "ingredients": ["chicken", "rice", "garlic"],
   "cuisine": "mexican",
-  "diet": "vegetarian",
+  "diet": "",
   "allergies": [],
   "preferences": []
 }
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 POST http://localhost:8080/saved/save
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3ODA0NTUyMjcsImV4cCI6MTc4MDU0MTYyN30.oiC0TeOCfxxcTjn2_NlKgXPfvQ9akc9zv8t7V8wrsc2u8S-HmaUSQrKlOjxW_NV-
+Authorization: Bearer {{token}}
 
 {
   "spoonacularId": 716361
@@ -48,7 +48,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3O
 ###
 GET http://localhost:8080/saved/getRecipes
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3ODA0NTUyMjcsImV4cCI6MTc4MDU0MTYyN30.oiC0TeOCfxxcTjn2_NlKgXPfvQ9akc9zv8t7V8wrsc2u8S-HmaUSQrKlOjxW_NV-
+Authorization: Bearer {{token}}
 
 {
 
@@ -58,7 +58,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3O
 
 DELETE http://localhost:8080/saved/remove
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ6ZGVyaXZhbDEiLCJpYXQiOjE3ODA0NTUyMjcsImV4cCI6MTc4MDU0MTYyN30.oiC0TeOCfxxcTjn2_NlKgXPfvQ9akc9zv8t7V8wrsc2u8S-HmaUSQrKlOjxW_NV-
+Authorization: Bearer {{token}}
 
 {
   "spoonacularId": 716361
