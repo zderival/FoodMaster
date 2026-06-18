@@ -1,10 +1,15 @@
 package com.zderival.FoodMaster.recipe;
 
+import com.zderival.FoodMaster.llm.LLMService;
+import com.zderival.FoodMaster.nutrition.NutritionProfileService;
+import com.zderival.FoodMaster.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,6 +26,9 @@ public class RecipeService {
     @Autowired
     @Lazy
     private RecipeService self;
+    private final LLMService llmService;
+    private final NutritionProfileService profileService;
+    private final UserService userService;
 
     public List<SpoonacularSearchResult> searchRecipes(RecipeRequest request) {
         String ingredientsParam = String.join(",", request.getIngredients());
@@ -50,8 +58,6 @@ public class RecipeService {
 
     @Cacheable(value = "recipes", key = "#id")
     public Recipe getRecipeInformation(int id){
-        System.out.println("Fetching from Spoonacular: " + id);
-        System.out.println("Cache should have: " + id);
         SpoonacularRecipeResponse spoonacularRecipe = restClient.get()
                 .uri("https://api.spoonacular.com/recipes/{id}/information/?includeNutrition=true&apiKey={apiKey}",
                 id,spoonacular_api_key)
@@ -93,6 +99,16 @@ public class RecipeService {
     public List<Recipe> getRecipes(RecipeRequest request){
         // Step 1: get basic results with IDs
         List<SpoonacularSearchResult> searchResults = searchRecipes(request);
+        // Check if user is authenticated — anonymous users have a String principal ("anonymousUser")
+        // Real authenticated users have a UserDetails object as their principal
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isLoggedIn = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
+        System.out.println("Auth: " + auth);
+        System.out.println("Principal: " + (auth != null ? auth.getPrincipal() : "null"));
+        System.out.println("Principal class: " + (auth != null ? auth.getPrincipal().getClass() : "null"));
+        if(searchResults.isEmpty() && isLoggedIn){
+            return llmService.generateRecipes(request,profileService.getProfileOrNull(userService.extractUser().getId()));
+        }
         // Step 2: for each result, get full details of recipe
         List<Recipe> recipes = new ArrayList<>();
         for(SpoonacularSearchResult result : searchResults){
@@ -102,3 +118,4 @@ public class RecipeService {
         return recipes;
     }
 }
+

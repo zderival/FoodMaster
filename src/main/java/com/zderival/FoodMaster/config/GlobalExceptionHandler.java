@@ -2,6 +2,7 @@ package com.zderival.FoodMaster.config;
 
 import com.zderival.FoodMaster.auth.InvalidCredentialsException;
 import com.zderival.FoodMaster.auth.UsernameAlreadyExistsException;
+import com.zderival.FoodMaster.llm.AiGeneratorFailedException;
 import com.zderival.FoodMaster.nutrition.ProfileExistsException;
 import com.zderival.FoodMaster.nutrition.ProfileNotFoundException;
 import com.zderival.FoodMaster.saved.RecipeAlreadySavedException;
@@ -40,5 +41,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProfileExistsException.class)
     public ResponseEntity<String> handleProfileExistsException(ProfileExistsException e){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(AiGeneratorFailedException.class)
+    public ResponseEntity<String> handleAiGeneratorFailedException(AiGeneratorFailedException e){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }

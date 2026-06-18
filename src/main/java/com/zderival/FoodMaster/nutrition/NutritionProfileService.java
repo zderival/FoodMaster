@@ -49,4 +49,8 @@ public class NutritionProfileService {
     private NutritionProfileResponse mapToResponse(NutritionProfile profile){
         return new NutritionProfileResponse(profile.getDiet(), profile.getGoal(), profile.getAllergies(),profile.getPreferences());
     }
+
+    public NutritionProfile getProfileOrNull(UUID userId) {
+        return nutritionProfileRepository.findByUserId(userId).orElse(null);
+    }
 }

@@ -26,10 +26,11 @@ Content-Type: application/json
 
 POST http://localhost:8080/recipes/search
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "ingredients": ["chicken", "rice", "garlic"],
-  "cuisine": "mexican",
+  "ingredients": ["zzz", "xyz123", "fakefood"],
+  "cuisine": "",
   "diet": "",
   "allergies": [],
   "preferences": []
@@ -102,3 +103,21 @@ Authorization: Bearer {{token}}
 {
 
 }
+
+###
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+Content-Type: application/json
+x-goog-api-key: {{$env.gemini_api_key}}
+
+{
+  "contents": [
+    {
+      "parts": [
+        { "text": "Say hello in one sentence." }
+      ]
+    }
+  ]
+}
+
+###
+GET https://generativelanguage.googleapis.com/v1beta/models?key={{$env.gemini_api_key}}

@@ -21,6 +21,5 @@ public class Recipe {
 
     private List<String> dietaryInfo;
 
-   // private SpoonacularNutrition spoonacularNutrition;
     private Nutrition nutrition;
 }
