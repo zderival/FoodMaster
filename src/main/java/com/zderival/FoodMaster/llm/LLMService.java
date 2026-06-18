@@ -11,6 +11,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 import java.util.List;
+import org.springframework.web.client.RestClientException;
 
 @Service
 @RequiredArgsConstructor
@@ -51,17 +52,17 @@ public class LLMService {
         List<GeminiPart> geminiPart = List.of(part);
         GeminiContent content = new GeminiContent(geminiPart);
         GeminiRequest geminiRequest = new GeminiRequest(List.of(content));
-        GeminiResponse response = restClient.post().uri("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent")
-                .header("x-goog-api-key", gemini_api_key)
-                .body(geminiRequest).retrieve().body(GeminiResponse.class);
-        GeminiCandidate firstCandidate = response.getCandidates().getFirst();
-        GeminiContent geminiContent = firstCandidate.getContent();
-        GeminiPart geminipart = geminiContent.getParts().getFirst();
-        String text = geminipart.getText();
         List<Recipe> recipes;
-        try {
+        try{
+            GeminiResponse response = restClient.post().uri("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent")
+                    .header("x-goog-api-key", gemini_api_key)
+                    .body(geminiRequest).retrieve().body(GeminiResponse.class);
+            GeminiCandidate firstCandidate = response.getCandidates().getFirst();
+            GeminiContent geminiContent = firstCandidate.getContent();
+            GeminiPart geminipart = geminiContent.getParts().getFirst();
+            String text = geminipart.getText();
             recipes = jsonMapper.readValue(text, new TypeReference<List<Recipe>>() {});
-        } catch (JacksonException e){
+        } catch (RestClientException | JacksonException e){
             throw new AiGeneratorFailedException("Failed to generate recipes from AI service — please try again");
         }
         for(Recipe recipe:recipes){
