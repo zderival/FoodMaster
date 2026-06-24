@@ -103,9 +103,6 @@ public class RecipeService {
         // Real authenticated users have a UserDetails object as their principal
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isLoggedIn = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
-        System.out.println("Auth: " + auth);
-        System.out.println("Principal: " + (auth != null ? auth.getPrincipal() : "null"));
-        System.out.println("Principal class: " + (auth != null ? auth.getPrincipal().getClass() : "null"));
         if(searchResults.isEmpty() && isLoggedIn){
             return llmService.generateRecipes(request,profileService.getProfileOrNull(userService.extractUser().getId()));
         }

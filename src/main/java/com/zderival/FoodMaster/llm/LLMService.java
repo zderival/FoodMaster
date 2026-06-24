@@ -5,6 +5,7 @@ import com.zderival.FoodMaster.recipe.Recipe;
 import com.zderival.FoodMaster.recipe.RecipeRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.core.JacksonException;
@@ -21,6 +22,7 @@ public class LLMService {
     @Value("${gemini.api.key}")
     private String gemini_api_key;
 
+    @Cacheable(value = "llmRecipes", keyGenerator = "llmCacheKeyGenerator")
     public List<Recipe> generateRecipes(RecipeRequest request, NutritionProfile profile){
         String ingredientsParam = String.join(",", request.getIngredients());
         String preferences = profile != null ? String.join(",", profile.getPreferences()) : "no preferences" ;
