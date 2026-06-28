@@ -29,7 +29,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "ingredients": ["zzz", "xyz123", "fakefood"],
+  "ingredients": ["zzz", "fakefood", "xyz123"],
   "cuisine": "",
   "diet": "",
   "allergies": [],
@@ -92,7 +92,6 @@ Authorization: Bearer {{token}}
 
 {
   "goal": "build muscle"
-
 }
 
 ###

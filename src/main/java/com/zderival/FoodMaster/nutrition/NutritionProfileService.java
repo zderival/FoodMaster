@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class NutritionProfileService {
     private final NutritionProfileRepository nutritionProfileRepository;
+    private static final Set<String> validGoals = Set.of("lose weight","lean","get stronger","build muscle");
+
     public NutritionProfileResponse createProfile(UUID userId, NutritionProfileRequest request){
         if (nutritionProfileRepository.existsNutritionProfileByUserId(userId)){
             throw new ProfileExistsException("You already have a Nutrition Profile.");}
@@ -18,7 +21,12 @@ public class NutritionProfileService {
         nutritionProfile.setUserId(userId);
         nutritionProfile.setDiet(request.getDiet());
         nutritionProfile.setAllergies(request.getAllergies());
-        nutritionProfile.setGoal(request.getGoal());
+        if (checkGoal(request.getGoal())) {
+            nutritionProfile.setGoal(request.getGoal());
+        }else{
+            throw new InvalidGoalException("This is an invalid goal. " +
+                    "Please enter a goal from within the list");
+        }
         nutritionProfile.setPreferences(request.getPreferences());
         nutritionProfileRepository.save(nutritionProfile);
         return new NutritionProfileResponse(nutritionProfile.getDiet(), nutritionProfile.getGoal(), nutritionProfile.getAllergies(),nutritionProfile.getPreferences());
@@ -30,7 +38,10 @@ public class NutritionProfileService {
 
         Optional.ofNullable(request.getDiet()).ifPresent(nutritionProfile::setDiet);
         Optional.ofNullable(request.getAllergies()).ifPresent(nutritionProfile::setAllergies);
-        Optional.ofNullable(request.getGoal()).ifPresent(nutritionProfile::setGoal);
+        if (checkGoal(request.getGoal())) {
+            Optional.ofNullable(request.getGoal()).ifPresent(nutritionProfile::setGoal);
+        }else {throw new InvalidGoalException("This is an invalid goal. " +
+                "Please enter a goal from within the list\"");}
         Optional.ofNullable(request.getPreferences()).ifPresent(nutritionProfile::setPreferences);
 
         nutritionProfileRepository.save(nutritionProfile);
@@ -52,5 +63,10 @@ public class NutritionProfileService {
 
     public NutritionProfile getProfileOrNull(UUID userId) {
         return nutritionProfileRepository.findByUserId(userId).orElse(null);
+    }
+
+    private boolean checkGoal(String goal){
+        if (goal == null){return true;}
+        return validGoals.contains(goal.toLowerCase());
     }
 }
