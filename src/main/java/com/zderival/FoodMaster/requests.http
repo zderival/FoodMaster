@@ -29,7 +29,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "ingredients": ["zzz", "fakefood", "xyz123"],
+  "ingredients": ["chicken", "rice", "beans"],
   "cuisine": "",
   "diet": "",
   "allergies": [],
@@ -120,6 +120,24 @@ x-goog-api-key: {{$env.gemini_api_key}}
 
 ###
 GET http://localhost:8080/recommendations/getRecommendations
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+}
+
+###
+GET http://localhost:8080/recipes/1096017
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+}
+
+###
+GET http://localhost:8080/history/recipes
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
