@@ -119,4 +119,10 @@ x-goog-api-key: {{$env.gemini_api_key}}
 }
 
 ###
-GET https://generativelanguage.googleapis.com/v1beta/models?key={{$env.gemini_api_key}}
+GET http://localhost:8080/recommendations/getRecommendations
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+}

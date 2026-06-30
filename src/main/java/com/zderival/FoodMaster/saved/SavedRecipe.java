@@ -17,4 +17,8 @@ public class SavedRecipe {
     private Long id;
     private UUID userId;
     private int spoonacularId;
+    private double fiber;
+    private double fat;
+    private double calories;
+    private double protein;
 }

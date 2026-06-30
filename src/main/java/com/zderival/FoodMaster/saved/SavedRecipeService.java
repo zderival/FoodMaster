@@ -20,7 +20,12 @@ public class SavedRecipeService {
     public void saveRecipe(UUID id, int spoonacularId){
         if(repository.existsByUserIdAndSpoonacularId(id, spoonacularId))
         {throw new RecipeAlreadySavedException("This recipe is already saved to your account.");}
+        Recipe recipeInformation  = recipeService.getRecipeInformation(spoonacularId);
         SavedRecipe recipe = new SavedRecipe();
+        recipe.setProtein(recipeInformation.getNutrition().getProtein());
+        recipe.setFat(recipeInformation.getNutrition().getFat());
+        recipe.setFiber(recipeInformation.getNutrition().getFiber());
+        recipe.setCalories(recipeInformation.getNutrition().getCalories());
         recipe.setUserId(id);
         recipe.setSpoonacularId(spoonacularId);
         repository.save(recipe);
