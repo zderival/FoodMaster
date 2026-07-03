@@ -144,3 +144,41 @@ Authorization: Bearer {{token}}
 {
 
 }
+
+###
+POST http://localhost:8080/mealplanner/createPlanner?weeks=4
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+}
+###
+GET http://localhost:8080/mealplanner/getPlanner
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+}
+
+###
+PUT http://localhost:8080/mealplanner/updateDay
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "weekNumber": 1,
+  "day": "Monday"
+}
+
+###
+PUT http://localhost:8080/mealplanner/updateMeal
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "weekNumber": 1,
+  "day": "Monday",
+  "meal": "breakfast"
+}
