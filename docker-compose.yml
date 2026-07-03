@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: food_master
+      MYSQL_ROOT_PASSWORD: ${MYSQL_Password}
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/food_master
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "${MYSQL_Password}"
+      SPOONACULAR_API_KEY: "${spoonacualr_api_key}"
+      GEMINI_API_KEY: "${gemini_api_key}"
+      JWT_SECRET: "${jwt_key}"
