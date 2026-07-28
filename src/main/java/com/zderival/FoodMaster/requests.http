@@ -29,7 +29,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "ingredients": ["chicken", "rice", "beans"],
+  "ingredients": [],
   "cuisine": "",
   "diet": "",
   "allergies": [],
