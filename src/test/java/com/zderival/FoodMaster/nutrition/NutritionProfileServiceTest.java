@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 // Always use annotation below when testing with Mockito
 @ExtendWith(MockitoExtension.class)
@@ -31,8 +33,24 @@ public class NutritionProfileServiceTest {
     public void createProfile_withInvalidGoal_throwsInvalidGoalException(){
         NutritionProfileRequest request = new NutritionProfileRequest();
         request.setGoal("get fat");
-        assertDoesNotThrow(InvalidGoalException.class,()-> {
+        assertThrows(InvalidGoalException.class,()-> {
             nutritionProfileService.createProfile(UUID.randomUUID(),request);
         });
+    }
+    @Test
+    public void createProfile_withValiddGoal(){
+        NutritionProfileRequest request = new NutritionProfileRequest();
+        request.setGoal("lean");
+        // when(any()).thenReturn - this line is doing 3 things at once. when() is a function that works as an conditional
+        // meaning "When this function happens". any() indicates that any matching value for the method
+        // can go in that methods parameters. thenReturn() is function that forces the return value to
+        // whatever the funtion in context of the test should return.
+        when(nutritionProfileRepository.existsNutritionProfileByUserId(any())).thenReturn(false);
+        // assertDoesNotThrow is when you are making sure that the exception is thrown here, and your
+        // test goes through successfully the method business logic
+        assertDoesNotThrow(() -> {
+            nutritionProfileService.createProfile(UUID.randomUUID(),request);
+        });
+
     }
 }
