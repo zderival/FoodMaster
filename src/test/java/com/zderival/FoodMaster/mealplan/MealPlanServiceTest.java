@@ -28,6 +28,8 @@ public class MealPlanServiceTest{
     private LLMService llmService;
     @Mock
     private DayPlanRepository dayPlanRepository;
+    // This test is to confirm that calling getMealPlan with no Nutrition Profile found, throws
+    // MealPlanNotFoundException
     @Test
     public void getMealPlan_withNoProfile_throwsMealPlanNotFoundException(){
         when(mealPlanRepository.findByUserId(any())).thenReturn(Optional.empty());
