@@ -1,5 +1,6 @@
 package com.zderival.FoodMaster.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,7 +52,16 @@ public class SecurityConfig {
 
                 // Insert our JwtFilter before Spring's default auth filter
                 // so every request is checked for a JWT token first
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                // Overrides Spring Security's default 403 response for unauthenticated requests.
+                // When no valid JWT is present, this AuthenticationEntryPoint runs and sends
+                // back 401 Unauthorized instead — the semantically correct status for
+                // "you didn't prove who you are" (vs. 403, which means "I know you, but you can't do this").
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(((request, response, authException) ->
+                        {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized: missing or invalid JWT");
+                        })));
 
         return http.build();
     }
