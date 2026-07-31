@@ -30,10 +30,10 @@ jobs:
           distribution: 'temurin'
       - name:  run tests
         env:
-            MYSQL_Username: root
-            MYSQL_Password: ${{ secrets.MYSQL_PASSWORD }}
-            spoonacualr_api_key: ${{ secrets.SPOONACULAR_API_KEY }}
-            gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-            jwt_key: ${{ secrets.JWT_SECRET }}
-            SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/food_master
+          MYSQL_Username: root
+          MYSQL_Password: ${{ secrets.MYSQL_PASSWORD }}
+          spoonacualr_api_key: ${{ secrets.SPOONACULAR_API_KEY }}
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          jwt_key: ${{ secrets.JWT_SECRET }}
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/food_master
         run: mvn test
