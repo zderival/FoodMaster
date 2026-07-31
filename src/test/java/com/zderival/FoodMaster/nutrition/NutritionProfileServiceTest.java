@@ -13,6 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+// JUnit is a testing framework for Java. It is being used to import some of these functions
+// It discovers @Test-annotated methods,
+// runs them, and reports pass/fail results.
+// It's independent of Spring Boot —
+// Spring just builds extra testing tools (like @SpringBootTest) on top of it.
 
 // Always use annotation below when testing with Mockito
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +34,7 @@ public class NutritionProfileServiceTest {
     @Test
     // This test is to test if the functionality of the checkGoal helper method, is doing its job
     // and generating the right result.
-    // @Test -
+    // @Test - Tells JUnit that this is a test function
     public void createProfile_withInvalidGoal_throwsInvalidGoalException(){
         NutritionProfileRequest request = new NutritionProfileRequest();
         request.setGoal("get fat");

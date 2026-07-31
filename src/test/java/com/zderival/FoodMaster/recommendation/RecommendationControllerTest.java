@@ -9,8 +9,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// Boots the actual full Spring application context meaning real beans, real config,
-// real security filter chain. This is what makes it an integration test
+// @SpringBootTest - Boots the actual full Spring application context meaning real beans, real config,
+// real security filter chain. This is what makes the difference between an integration test
 // instead of a unit test (no mocking involved here).
 @SpringBootTest
 // Tells Spring to also create a MockMvc bean, wired against that real context above,
@@ -21,7 +21,7 @@ public class RecommendationControllerTest {
     // behind it is from your actual program.
     // It lets me simulate a full HTTP request/response cycle
     // in-memory, hitting the actual filter chain, and real
-    // controller — all without actually starting a server on a real network port.
+    // controller — all without actually starting a server on a real network.
     // Spring creates this bean automatically because of @AutoConfigureMockMvc above,
     // and just injects it here to use in my test methods.
 

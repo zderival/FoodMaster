@@ -19,6 +19,8 @@ public class NutritionProfileControllerTest {
     private JwtUtil jwtUtil;
 
     @Test
+    // This test is to prove that when creating a new nutrition with a invalid goal, the correct
+    // status error to be thrown is 400/BadRequest.
     public void createProfile_withInValidGoal_throws400Error() throws Exception{
         String token = jwtUtil.generateToken("zderival");
         mockMvc.perform(post("/profile/create")
