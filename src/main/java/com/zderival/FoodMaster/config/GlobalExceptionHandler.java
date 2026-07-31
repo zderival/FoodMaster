@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -59,4 +60,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMealPlanNotFoundException(MealPlanNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<String> handleHttpClientErrorException(HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body("Service unavailable at the moment, please try again later.");
+        } else {
+            return ResponseEntity.status(e.getStatusCode()).body("An error occurred with external API. " +
+                    "Please try again later.");
+        }    }
 }

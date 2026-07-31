@@ -31,8 +31,11 @@ public class RecipeService {
     private final UserService userService;
 
     public List<SpoonacularSearchResult> searchRecipes(RecipeRequest request) {
-        String ingredientsParam = String.join(",", request.getIngredients());
-        String allergiesParam = String.join(",", request.getAllergies());
+        List<String> ingredients = request.getIngredients() != null ? request.getIngredients() : List.of();
+        String ingredientsParam = String.join(",", ingredients);
+
+        List<String> allergies = request.getAllergies() != null ? request.getAllergies() : List.of();
+        String allergiesParam = String.join(",", allergies);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.spoonacular.com/recipes/complexSearch/")
                 .queryParam("includeIngredients", ingredientsParam)
