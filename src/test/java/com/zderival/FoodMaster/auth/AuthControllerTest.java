@@ -36,6 +36,7 @@ public class AuthControllerTest {
     """.formatted(random_user,random_user);
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk());
+
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)).andExpect(status().isConflict());
