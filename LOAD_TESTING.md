@@ -170,6 +170,42 @@ This is most consistent with Spoonacular rejecting an internal call made during 
 | `POST /recipes/search` | ⚠️ Exercised once as part of Test 3 setup (surfaced and led to fixing the `NullPointerException` bug above), but never load tested directly under concurrent traffic. Follow-up item once Spoonacular API quota resets. |
 
 ---
+## Test 7: Gemini LLM Fallback — Cache Miss vs. Cache Hit
+
+**Endpoint:** `POST /recipes/search`
+**Trigger condition:** The Gemini fallback (`llmService.generateRecipes`) only activates when the Spoonacular search returns zero results (`searchResults.isEmpty()`) 
+**and** the requesting user is authenticated. 
+
+**Method:** Sent a request with ingredients unlikely to match any real recipe (`["motor oil", "durian"]`), triggering a cold call to Gemini. 
+Immediately repeated the identical request to test the `@Cacheable("llmRecipes")` layer on `generateRecipes`.
+
+| Run | Condition | Response Time |
+|---|---|---|
+| 1 | Cache miss (real Gemini generation of 5 structured recipes) | **22.20s** |
+| 2 | Cache hit (served from cache) | **567.65ms** |
+
+**Result:** ~97.4% reduction in response time on cache hit.
+
+### Bugs found: NullPointerExceptions in the Gemini fallback path
+
+Both bugs follow the same pattern already fixed in `RecipeService.searchRecipes` during earlier load testing: an unguarded call to `.isEmpty()` or `.stream()` on a request field that can be `null` when a client omits it from the JSON body (as this test's k6 script does, sending only `ingredients`).
+
+**Bug 1 — `RecipeService.generateRecipes`:**
+```java
+} else if (!request.getAllergies().isEmpty()) {  // NPE when allergies is null
+```
+Fixed by introducing a null-safe local variable before the branch:
+```java
+List<String> requestAllergies = request.getAllergies() != null ? request.getAllergies() : List.of();
+```
+and using it consistently in place of the direct getter call. The same fix was applied preemptively to the method's `ingredients` handling.
+
+**Bug 2 — `LLMCacheKeyGenerator` (more subtle):** The identical unguarded pattern existed in the `@Cacheable` key generator itself, which computes the cache key by calling `recipeRequest.getAllergies().isEmpty()` and `recipeRequest.getIngredients().stream()...` directly. Because Spring's caching proxy computes the cache key **before** invoking the actual method body, this crash occurred even though `generateRecipes` itself had already been fixed — a debug log placed at the top of `generateRecipes` never printed, confirming the method body was never reached. Fixed with the same null-safe pattern, applied to both `getIngredients()` and `getAllergies()` inside the key generator.
+
+**Takeaway:** `@Cacheable` methods have code — the key generator — that executes before the method body. Null-safety fixes applied to a cached method's body do not protect against a matching bug in its key generator; both need to be checked independently.
+
+
+---
 
 ## Summary
 
@@ -178,3 +214,6 @@ This is most consistent with Spoonacular rejecting an internal call made during 
 - `/recommendations` is fast (~10ms) for users with no data, but inherently expensive (~2s) on a cold cache due to an uncached Spoonacular `similar` lookup plus per-recipe cache misses.
 - Concurrent load against `/recommendations` exposed a genuine gap in error handling: an unhandled third-party `429` was surfacing as an opaque `500`. Fixed with a dedicated `HttpClientErrorException` handler returning a proper `503`, verified with a clean ~12,000-request re-run at 0.00% failure.
 - Testing volume from this session was high enough to trigger real Spoonacular API rate limiting, confirmed by an official notification — a natural and honest stopping point for this round of testing, and a reminder that `/recommendations`' uncached `similar` call is a meaningful dependency on third-party rate limits worth addressing further (e.g., adding caching to that call) in future work.
+- The Gemini LLM fallback provides a measured **~98% reduction** in response time on cache hit (22.2s → 568ms), closely matching (and now empirically validating) the project's original manually-tested claim.
+- Load testing this path surfaced and led to the fix of **two related `NullPointerException` bugs** — one in `RecipeService.generateRecipes`, and a more subtle one in `LLMCacheKeyGenerator`, which executes as part of Spring's caching proxy before the annotated method's body ever runs.
+- Concurrent load testing of this endpoint was attempted but is not conclusive, having been interrupted by Gemini's real daily API quota — a known limitation of testing against a free/dev-tier third-party LLM API, consistent with the Spoonacular rate-limiting encountered during earlier testing.

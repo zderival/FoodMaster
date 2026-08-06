@@ -19,4 +19,5 @@ export default function (data) {
     const randomIndex = Math.floor(Math.random() * data.length);
     const randomId = data[randomIndex];
     http.get(`http://localhost:8080/recipes/${randomId}`)
+
 }
