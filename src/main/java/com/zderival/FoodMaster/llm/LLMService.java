@@ -23,19 +23,20 @@ public class LLMService {
     private final JsonMapper jsonMapper;
     @Value("${gemini.api.key}")
     private String gemini_api_key;
-
     @Cacheable(value = "llmRecipes", keyGenerator = "llmCacheKeyGenerator")
     public List<Recipe> generateRecipes(RecipeRequest request, NutritionProfile profile) {
-        String ingredientsParam = String.join(",", request.getIngredients());
+        List<String> ingredients = request.getIngredients() != null ? request.getIngredients() : List.of();
+        String ingredientsParam = String.join(",", ingredients);
         String preferences = profile != null ? String.join(",", profile.getPreferences()) : "no preferences";
         String diet = profile != null ? profile.getDiet() : "no specific diet";
         String goal = profile != null ? profile.getGoal() : "No goals";
         String allergies;
+        List<String> requestAllergies = request.getAllergies() != null ? request.getAllergies() : List.of();
 
         if (profile != null && !profile.getAllergies().isEmpty()) {
             allergies = String.join(",", profile.getAllergies());
-        } else if (!request.getAllergies().isEmpty()) {
-            allergies = String.join(",", request.getAllergies());
+        } else if (!requestAllergies.isEmpty()) {
+            allergies = String.join(",", requestAllergies);
         } else {
             allergies = "No allergies given";
         }
