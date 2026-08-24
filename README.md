@@ -152,7 +152,7 @@ Every push and pull request runs the integration test suite via **GitHub Actions
 ## 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/zderival/FoodMaster
 cd FoodMaster
 ```
 
