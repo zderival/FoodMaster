@@ -1,0 +1,12 @@
+<h1> FoodMaster </h1>
+<input type= "text" id="enter-ingredients-box">
+<label for="enter-ingredients-box"></label>
+
+<button id="search_button"> Enter</button>
+<p id="search_button_text"></p>
+
+<script>
+    // asks the page for an element with that id.
+    document.getElementById("search_button").addEventListener("click", function() {
+    document.getElementById("search_button_text").textContent= document.getElementById("enter-ingredients-box").value;});
+</script>
