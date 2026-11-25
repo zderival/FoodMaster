@@ -8,5 +8,23 @@
 <script>
     // asks the page for an element with that id.
     document.getElementById("search_button").addEventListener("click", function() {
-    document.getElementById("search_button_text").textContent= document.getElementById("enter-ingredients-box").value;});
+    const userInput = document.getElementById("enter-ingredients-box").value
+    const userInputSplit = userInput.split(",")
+    const userInputTrim = userInputSplit.map(function(n){return n.trim()})
+    console.log(userInputTrim)
+    getRecipes(userInputTrim)
+    document.getElementById("search_button_text").textContent= userInput;
+    
+    });
+
+    async function getRecipes(userInputTrim) {
+    console.log("getRecipes ran")
+    const response = await fetch("http://localhost:8080/recipes/search", {
+    method: "POST",
+    headers: {"Content-Type": "application/json" },
+    body: JSON.stringify({"ingredients": userInputTrim})
+        });
+    const data = await response.json();
+    console.log(response.status,data)
+    }
 </script>
